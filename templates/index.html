@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Threat Nexus</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='index.css') }}">
+</head>
+<body>
+    <h1>Threat Nexus</h1>
+
+    <div class="base">
+    <!-- File Upload Form -->
+        <div class="file_analysis">
+            <form action="/analyze-file" enctype="multipart/form-data" method="post" class="file_form">
+                <h2>Analyze File</h2>
+                <div class="file_up">
+                    <input class="in_upload" type="file" name="file" required>
+                    <button class="upload" type="submit">Upload and Analyze</button>
+                </div>
+                <div class="enable_any_run">
+                    <label>
+                        <input type="checkbox" name="enable_anyrun">
+                        Enable ANY.RUN analysis
+                    </label>
+                    <p class="note">!!!ANY.RUN API-support requires Hunter or Enterprise subscriptions!!!</p>
+                </div>
+            </form>
+        </div>
+
+        <hr>
+    <!-- IP/Domain Lookup Form -->
+        <div class ="ip_analysis">
+            <form action="/analyze-ip" method="post" class="ip_form">
+                <h2>Analyze IP or Domain</h2>
+                <div class="ip_up">
+                    <input class="ip_upload" type="text" name="ip_or_domain" placeholder="Enter IP or domain" required>
+                    <button type="submit" class="upload">Analyze IP</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

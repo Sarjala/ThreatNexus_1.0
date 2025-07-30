@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analysis Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='results.css') }}">
+</head>
+<body>
+    <h1>Analysis Result</h1>
+
+    {% if vt_file and 'results' in vt_file and vt_file['results'] %}
+        <h2>VirusTotal Result</h2>
+
+        <div class="virustotal-section">
+            {% if vt_file.meta.file_info %}
+            <h3>File Information</h3>
+            <ul>
+                <li><strong>MD5:</strong> {{ vt_file.meta.file_info.md5 }}</li>
+                <li><strong>SHA-1:</strong> {{ vt_file.meta.file_info.sha1 }}</li>
+                <li><strong>SHA-256:</strong> {{ vt_file.meta.file_info.sha256 }}</li>
+                <li><strong>Size:</strong> {{ vt_file.meta.file_info.size | filesizeformat }}</li>
+            </ul>
+            {% endif %}
+
+            <h3>Scan Summary</h3>
+            <table class="virustotal-table">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key, value in vt_file.results.items() %}
+                <tr>
+                    <td>{{ key.replace("-", " ").capitalize() }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+    {% if anyrun_result and anyrun_result["enabled"] %}
+        <h2>ANY.RUN Result</h2>
+
+        <div class="anyrun-section">
+            <h3>Filename</h3>
+            <p>{{ anyrun_result.file }}</p>
+
+            {% if anyrun_result.hashes is defined %}
+                <h3>Hashes</h3>
+                <ul>
+                    {% for key, value in anyrun_result.hashes.items() %}
+                        <li><strong>{{ key }}:</strong> {{ value }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <h3>Info</h3>
+            <ul>
+                {% for key, value in anyrun_result.info.items() %}
+                    <li><strong>{{ key }}:</strong> {{ value }}</li>
+                {% endfor %}
+                <a href="{{ anyrun_result['web_result'] }}" target="_blank" class="url-link">View on website</a>
+            </ul>
+
+            <h3>PCAP URL</h3>
+            <p><a href="{{ anyrun_result.pcap_url }}" target="_blank">{{ anyrun_result.pcap_url }}</a></p>
+
+            <h3>Screenshots</h3>
+            {% if anyrun_result.screenshots %}
+                <div class="screenshot-section">
+                    {% for shot in anyrun_result.screenshots %}
+                        <a href="{{ shot.permanentUrl }}" target="_blank" class="screenshot-link">
+                            <img src="{{ shot.thumbnailUrl }}" alt="Screenshot thumbnail" class="screenshot">
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No screenshots available.</p>
+            {% endif %}
+
+            <div class="counter-section">
+                <h3>Counters</h3>
+                {% for category, data in anyrun_result.counters.items() %}
+                    <details class="collapsible" open>
+                    <summary><strong>{{ category.capitalize() }}</strong></summary>
+                    <ul>
+                        {% for key, value in data.items() %}
+                        {% if value is mapping %}
+                            <li>
+                            <strong>{{ key }}:</strong>
+                            <ul>
+                                {% for subkey, subval in value.items() %}
+                                <li><strong>{{ subkey }}:</strong> {{ subval }}</li>
+                                {% endfor %}
+                            </ul>
+                            </li>
+                        {% else %}
+                            <li><strong>{{ key }}:</strong> {{ value }}</li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                    </details>
+                {% endfor %}
+                </div>
+
+            <details class="collapsible" open>
+                <summary><strong>Incidents</strong></summary>
+                <div class="incident-list">
+                    {% if anyrun_result.incidents %}
+                        {% for incident in anyrun_result.incidents %}
+                            <details class="incident-entry">
+                                <summary>{{ incident.title or "Untitled Incident" }}</summary>
+                                <div class="incident-card">
+                                    {% if incident.description %}
+                                        <p>{{ incident.description }}</p>
+                                    {% endif %}
+                                    <ul>
+                                        {% for key, value in incident.items() %}
+                                            {% if key not in ["title", "description"] %}
+                                                <li><strong>{{ key | capitalize }}:</strong> {{ value }}</li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </details>
+                        {% endfor %}
+                    {% else %}
+                        <p>No incidents reported.</p>
+                    {% endif %}
+                </div>
+            </details>
+    {% endif %}
+
+    <div class="ip-analysis">
+        <div class="container">
+            {% if abuse_result is defined %}
+                <h2>AbuseIPDB Result</h2>
+                <div class="ip-section">
+                    {% if abuse_result.error %}
+                        <strong class="error"> {{ abuse_result.error }}</strong>
+                    {% elif abuse_result.note %}
+                        <strong> {{ abuse_result.note }}</strong>
+                    {% else %}
+                        <ul>
+                            <li><strong>IP-address:</strong> {{ abuse_result.address }}</li>
+                            <li><strong>Is public:</strong> {{ abuse_result.public }}</li>
+                            <li><strong>Confidence:</strong> {{ abuse_result.confidence }}</li>
+                            <li><strong>Location:</strong>
+                                {% if abuse_result.location %}
+                                    {{ abuse_result.location }}
+                                    <img src="https://flagcdn.com/24x18/{{ abuse_result.location|lower }}.png"
+                                        alt="{{ abuse_result.location }} flag"
+                                        class="flag-icon">
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </li>
+                            <li><strong>Domain:</strong> {{ abuse_result.domain }}</li>
+                            <li><strong>Number or reports:</strong> {{ abuse_result.total_reports }}</li>
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="container">
+            {% if vt_result is defined %}
+                <h2>VirusTotal Result</h2>
+                <div class="ip-section">
+                    {% if vt_result.error %}
+                        <strong class="error"> {{ vt_result.error }}</strong>
+                    {% else %}
+                        <h3>Scan Summary</h3>
+                        <table class="virustotal-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for key, value in vt_result.verdict.items() %}
+                            <tr>
+                                <td>{{ key.replace("-", " ").capitalize() }}</td>
+                                <td>{{ value }}</td>
+                            </tr>
+                                {% endfor %}
+                        </tbody>
+                        </table>
+                        <div class="vt_location">
+                            <strong>Location:</strong>
+                                {% if vt_result.location %}
+                                    {{ vt_result.location }}
+                                    <img src="https://flagcdn.com/24x18/{{ vt_result.location|lower }}.png"
+                                        alt="{{ vt_result.location }} flag"
+                                        class="flag-icon">
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                        </div>
+                        <br>
+                        <strong>Whois Result:</strong>
+                        <ul>
+                            {% set whois_entries = vt_result.whois.split('\n') if vt_result.whois else [] %}
+
+                            {% for entry in whois_entries[:3] %}
+                                <li>{{ entry }}</li>
+                            {% endfor %}
+                            {% if whois_entries|length > 3 %}
+                                <details>
+                                    <summary>Show more</summary>
+                                    <ul>
+                                        {% for entry in whois_entries[3:] %}
+                                            <li>{{ entry }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </details>
+                            {% endif %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="container">
+            {% if url_result is defined %}
+                <h2>Urlscan.io Result</h2>
+                <div class="ip-section">
+                    {% if url_result.error %}
+                        <strong class="error">{{ url_result.error }}</strong>
+                    {% else %}
+                        <ul>
+                            {% if url_result.ip %}
+                                <li><strong>IP Address:</strong> {{ url_result.ip }}</li>
+                            {% endif %}
+
+                            {% if url_result.domain %}
+                                <li><strong>Domain:</strong> {{ url_result.domain }}</li>
+                            {% endif %}
+
+                            <li><strong>Score:</strong> {{ url_result.score }}</li>
+
+                            <li><strong>Verdict:</strong>
+                                {% if url_result.verdict %}
+                                    Malicious
+                                {% else %}
+                                    Clean
+                                {% endif %}
+                            </li>
+
+                            <li><strong>Categories:</strong>
+                                {% if url_result.categories and url_result.categories|length > 0 %}
+                                    {{ url_result.categories | join(', ') }}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </li>
+
+                            {% if url_result.screenshot %}
+                                <li>
+                                    <strong>Screenshot:</strong>
+                                    <div class="screenshot-section">
+                                        <a href="{{ url_result.screenshot }}" target="_blank" class="screenshot-link">
+                                            <img src="{{ url_result.screenshot }}" alt="Screenshot thumbnail" class="screenshot">
+                                        </a>
+                                    </div>
+                                </li>
+                            {% endif %}
+
+                            <li><strong>Report:</strong>
+                                <a class="urlscan_link" href="{{ url_result['web_result'] }}" target="_blank">View on URLScan.io</a>
+                            </li>
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <br>
+    <a href="/">Go back</a>
+</body>
+</html>

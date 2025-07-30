@@ -1,0 +1,145 @@
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #1e1f26;
+    color: #e0e6ed;
+    padding: 40px;
+}
+
+/* Main Heading */
+h1 {
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 50px;
+    color: #4da6ff;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Base Container */
+.base {
+    max-width: 1300px;
+    margin: 0 auto;
+    background-color: #2c2f36;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* Shared Form Styles */
+form {
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #8ab4f8;
+    margin-bottom: 20px;
+}
+
+/* Upload Areas */
+.file_up,
+.ip_up {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+input[type="file"],
+input[type="text"] {
+    flex: 1;
+    height: 50px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background-color: #1b1d23;
+    color: #ffffff;
+}
+
+input[type="file"]::file-selector-button {
+    background-color: #4da6ff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Submit Buttons */
+.file_up .upload,
+.ip_up .upload {
+    height: 48px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 200px; /* fixed width */
+    background-color: #4da6ff;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.upload:hover {
+    background-color: #2e90e5;
+}
+
+/* Checkbox Label */
+.enable_any_run {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    font-size: 0.95rem;
+    color: #c5c8ce;
+}
+
+.enable_any_run input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+
+/* Note Under Checkbox */
+.note {
+    font-size: 0.85rem;
+    color: #ff7575;
+    margin-top: 5px;
+}
+
+/* Divider */
+hr {
+    margin: 30px 0;
+    border: 0;
+    height: 1px;
+    background: #444;
+}
+
+.file_analysis {
+    flex-basis: 50%;
+}
+.ip_analysis {
+    flex-basis: 50%;
+}
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+    .file_up,
+    .ip_up {
+        flex-direction: column;
+    }
+
+    .upload {
+        width: 100%;
+    }
+}
