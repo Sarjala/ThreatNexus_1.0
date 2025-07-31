@@ -64,12 +64,15 @@ cd ThreatNexus_1.0
 Create a .env file in the project root:
 
 VIRUSTOTAL_API_KEY=your_virustotal_api_key
+
 ANYRUN_API_KEY=your_anyrun_api_key    # Optional
+
 ABUSEIPDB_API_KEY=your_abuseipdb_api_key
+
 URLSCAN_API_KEY=your_urlscan_api_key
 
 3️⃣Run the application
 
-uvicorn main:app --reload
+fastapi run main.py
 
 The app will be available at: http://127.0.0.1:8000
