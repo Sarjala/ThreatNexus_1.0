@@ -39,21 +39,15 @@ async def analyze_file(request: Request, file: UploadFile = File(...), enable_an
             files = {"file": (file.filename, f)}
             vt_response = requests.post("https://www.virustotal.com/api/v3/files", headers=headers, files=files)
             analysis = vt_response.json() #Otetaan vastaus talteen
-            print("saadaan ID")
-            print(analysis)
 
             # Kerätään vastauksena saatu ID ja syötetään se eteenpäin analyysiin
             analysis_id = analysis.get("data", {}).get("id")
             if analysis_id:
                 analysis_url = f"https://www.virustotal.com/api/v3/analyses/{analysis_id}"
-                print("URL jota testataan")
-                print(analysis_url)
                 for _ in range(10):  # Yritetään max 10 kertaa ennen Timeout virhettä
                     status_response = requests.get(analysis_url, headers=headers) # Haetaan ID'n mukainen lopullinen analyysi
                     status_data = status_response.json()
                     if status_data.get("data", {}).get("attributes", {}).get("status") == "completed": # Tarkistetaan vastauksesta status ja joko yritetään uudestaan tai annetaan valmis data eteenpäin
-                        print("Nyt raaka-data")
-                        print(status_data)
                         vt_file = {"meta": status_data.get("meta", {}),
                                     "results": status_data.get("data", {}).get("attributes", {}).get("stats", {})}
                         print("nyt valmis data")
@@ -97,12 +91,8 @@ async def analyze_file(request: Request, file: UploadFile = File(...), enable_an
                 files=multipart_data
             )
             submission_result = anyrun_response.json() # Otetaan talteen vastaus
-            print("any.run alku")
-            print(submission_result)
 
             analysis_id = submission_result.get("data", {}).get("taskid") # Kerätään vastauksena saatu ID ja syötetään se eteenpäin analyysiin
-            print("any.run id")
-            print(analysis_id)
             if analysis_id:
                 for _ in range(20):  # Yritetään max 20 kertaa ennen Timeout virhettä
                     status_response = requests.get(f"https://api.any.run/v1/analysis/{analysis_id}", headers=headers) # Haetaan lopullinen analyysi vastauksena saadun ID'n perusteella
@@ -121,8 +111,6 @@ async def analyze_file(request: Request, file: UploadFile = File(...), enable_an
                                             "incidents": status_data.get("data", {}).get("incidents", []),
                                             "enabled": True
                             }
-                        print("saatu data")
-                        print(anyrun_result)
                         break
                     time.sleep(3) # Odota 3 sec ennen seuraavaa yritystä
                 else:
