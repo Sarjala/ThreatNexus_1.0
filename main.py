@@ -50,8 +50,6 @@ async def analyze_file(request: Request, file: UploadFile = File(...), enable_an
                     if status_data.get("data", {}).get("attributes", {}).get("status") == "completed": # Tarkistetaan vastauksesta status ja joko yritetään uudestaan tai annetaan valmis data eteenpäin
                         vt_file = {"meta": status_data.get("meta", {}),
                                     "results": status_data.get("data", {}).get("attributes", {}).get("stats", {})}
-                        print("nyt valmis data")
-                        print(vt_file)
                         break
                     time.sleep(3) # Odota 3 sec ennen seuraavaa yritystä
                 else:
